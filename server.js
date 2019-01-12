@@ -1,53 +1,25 @@
 const express = require('express');
 const request = require('request-promise');
-const iplocation = require('iplocation').default;
-const LocalStorage = require('node-localstorage').LocalStorage;
-localStorage = new LocalStorage('./scratch');
 const bodyParser = require('body-parser');
 const validateip = require('validate-ip');
-const app = express();
+const LocalStorage = require('node-localstorage').LocalStorage;
+localStorage = new LocalStorage('./scratch');
+const getWoeid = require('./getWoeidFromIp')
 
+const app = express();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }))
 
-
-function getWoeidFromIp(ipAdress, callback){
-
-  //extract lattlong from ip location
-  iplocation(ipAdress)
-  .then((res) => {
-    let lattlong = res.latitude + ', ' + res.longitude;
-    const options = {
-      method: 'GET',
-      uri: `https://www.metaweather.com/api/location/search/?lattlong=${lattlong}`,
-    }
-
-    //extract the woeid from lattlong sending request to metaweatherAPI
-    request(options)
-    .then((response) => {
-      weather_json = JSON.parse(response);
-      let woeid = weather_json[0].woeid;
-       callback(woeid);
-    })
-    .catch(err => {
-      callback(new Error('Bad ip'));
-    });
-  })
-  .catch(err => {
-     callback(new Error('Bad ip'));
-  });
-}
-
 app.get('/', (req, res) => {
   let ipAdress = localStorage.getItem('storedIp');
 
-  getWoeidFromIp(ipAdress, (result) => {
+  //get woeid
+  getWoeid.getWoeid(ipAdress, (result) => {
     //if IP is wrong
     if (result == 'Error: Bad ip'){
       res.render('weather', {error: 'This ip is not valid.'});
     }
-
     else {
       const options = {
        method: 'GET',
