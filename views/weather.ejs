@@ -1,24 +1,67 @@
 <!DOCTYPE html>
+<style media="screen">
+  *{font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;}
+  .headerContainer {
+    display: flex;
+    background-color: #00bcd440;
+    margin: -10px;
+    padding: 8px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .mainContainer {
+    display: flex;
+    /* margin: -10px; */
+    padding: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-direction: column;
+  }
+  .meteoData {
+    /* justify-content: center; */
+    border: 5px solid #00bcd440;
+    box-shadow: 5px 5px 9px #555;
+    padding: 20px;
+    padding-left: 74px;
+    padding-right: 74px;
+  }
+  .input {
+    padding: 15px;
+  }
+</style>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>What is the weather ?</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <title>What is the weather ?</title>
-</head>
+  <body>
+    <div class="headerContainer">
+      <h1 class="title"> What is the weather ?</h1>
+    </div>
 
-<body>
-  <form method="post">
-    <input type="text" placeholder="City Name">
-    <button type="button" name="button">Add City</button>
-  </form>
-  <figure>
-    <img src="http://openweathermap.org/img/w/10d.png" alt="Image">
-  </figure>
-  <div class="content">
-    <p>
-      <span>Las Vegas</span><br>
-      <span>29C</span><br>
-      thunderstorm with heavy rain
-    </p>
-  </div>
-</body>
+    <div class="mainContainer">
+      <div class="input">
+        <form action="http://localhost:3000" method="POST">
+          <input type="text" name="ip_adress" placeholder="IP Adress">
+          <button type="submit" name="button">Send IP</button>
+        </form>
+
+      </div>
+      <div class="meteoData">
+        <% if(locals.error) {%>
+          <p><%= error %></p>
+        <% } %>
+        <% if(locals.weather) {%>
+          <span><%= weather.city %>, </span>
+          <span><%= weather.country %></span><br>
+          <span><%= weather.temperature %> °C</span><br>
+          <figure>
+            <img width="50 px" src="https://www.metaweather.com/static/img/weather/<%= weather.icon %>.svg" alt="Image">
+          </figure>
+          <span><%= weather.description %></span>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>
